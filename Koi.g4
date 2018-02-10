@@ -12,8 +12,8 @@ line: comment | statement;
 comment: COMMENT | MULTICOMMENT;
 
 statement: print_stmt;
-print_stmt: PRINT OPENBRAKET (value SEMICOLON)* value? CLOSEBRACKET #Print
-          | PRINTLN OPENBRAKET (value SEMICOLON)* value? CLOSEBRACKET #PrintLine
+print_stmt: PRINT OPENBRAKET (value COMMA)* value? CLOSEBRACKET #Print
+          | PRINTLN OPENBRAKET (value COMMA)* value? CLOSEBRACKET #PrintLine
           ;
 
 value: SINGLESTRING | LITSTRING | MULTISTRING
