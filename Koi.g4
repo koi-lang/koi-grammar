@@ -12,7 +12,9 @@ line: comment | statement;
 comment: COMMENT | MULTICOMMENT;
 
 statement: print_stmt;
-print_stmt: (PRINT | PRINTLN) OPENBRAKET (value COMMENT)* value? CLOSEBRACKET;
+print_stmt: PRINT OPENBRAKET (value SEMICOLON)* value? CLOSEBRACKET #Print
+          | PRINTLN OPENBRAKET (value SEMICOLON)* value? CLOSEBRACKET #PrintLine
+          ;
 
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | NUMBER | FLOAT | BOOLEAN
