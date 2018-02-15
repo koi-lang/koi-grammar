@@ -11,13 +11,15 @@ line: comment | statement;
 
 comment: COMMENT | MULTICOMMENT;
 
-statement: print_stmt;
+statement: print_stmt | asstmt;
 print_stmt: PRINT OPENBRAKET (value COMMA)* value? CLOSEBRACKET #Print
           | PRINTLN OPENBRAKET (value COMMA)* value? CLOSEBRACKET #PrintLine
           ;
+asstmt: VAR ID COLON value;
 
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | NUMBER | FLOAT | BOOLEAN
+     | ID
      ;
 
 /*
@@ -31,6 +33,7 @@ MULTICOMMENT: HASHTAG DASH .*? DASH HASHTAG -> skip;
 fragment HASHTAG: '#';
 fragment DASH: '-';
 SEMICOLON: ';';
+COLON: ':';
 fragment DOT: '.';
 fragment DOUBLEQUOTE: '"';
 fragment SINGLEQUOTE: '\'';
@@ -52,6 +55,8 @@ NUMBER: [0-9]+;
 FLOAT: NUMBER DOT NUMBER;
 BOOLEAN: TRUE | FALSE;
 
+ID: LETTER (LETTER | NUMBER)*;
+
 SPACE: [ \t\r\n] -> skip;
 WS: [ \t\r\n\f]+ -> skip;
 
@@ -61,4 +66,6 @@ FALSE: 'false';
 
 PRINT: 'print';
 PRINTLN: 'println';
+
+VAR: 'var';
 
