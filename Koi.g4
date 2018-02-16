@@ -4,10 +4,10 @@ grammar Koi;
     Parser Rules
  */
 
-program: code EOF;
-code: (line (SEMICOLON line)*)*;
+program: code? EOF;
+code: line line*;
 
-line: comment | statement;
+line: (comment | statement) SEMICOLON?;
 
 comment: COMMENT | MULTICOMMENT;
 
@@ -60,6 +60,8 @@ ID: LETTER (LETTER | NUMBER)*;
 SPACE: [ \t\r\n] -> skip;
 WS: [ \t\r\n\f]+ -> skip;
 
+NEWLINE: '\n';
+
 // Keywords
 TRUE: 'true';
 FALSE: 'false';
@@ -68,4 +70,3 @@ PRINT: 'print';
 PRINTLN: 'println';
 
 VAR: 'var';
-
