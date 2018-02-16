@@ -1,2 +1,2 @@
 # grammars
-The grammars for the various Koi languages.
+The Koi grammar.
