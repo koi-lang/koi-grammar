@@ -105,3 +105,10 @@ ENV/
 *.iml
 out
 gen
+
+# ANTLR4 files
+Koi.tokens
+KoiLexer.py
+KoiLexer.tokens
+KoiListener.py
+KoiParser.py
