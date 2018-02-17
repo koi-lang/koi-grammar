@@ -29,6 +29,15 @@ value: SINGLESTRING | LITSTRING | MULTISTRING
 COMMENT: HASHTAG ~[\r\n]* -> skip;
 MULTICOMMENT: HASHTAG DASH .*? DASH HASHTAG -> skip;
 
+// Keywords
+TRUE: 'true';
+FALSE: 'false';
+
+PRINT: 'print';
+PRINTLN: 'println';
+
+VAR: 'var';
+
 // Punctuation
 fragment HASHTAG: '#';
 fragment DASH: '-';
@@ -61,12 +70,3 @@ SPACE: [ \t\r\n] -> skip;
 WS: [ \t\r\n\f]+ -> skip;
 
 NEWLINE: '\n';
-
-// Keywords
-TRUE: 'true';
-FALSE: 'false';
-
-PRINT: 'print';
-PRINTLN: 'println';
-
-VAR: 'var';
