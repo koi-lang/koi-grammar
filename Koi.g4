@@ -4,19 +4,23 @@ grammar Koi;
     Parser Rules
  */
 
-program: code? EOF;
-code: line line*;
+program: code EOF;
+code: (line SEMICOLON?)*;
 
-line: (comment | statement) SEMICOLON?;
+line: comment | statement | expression;
 
 comment: COMMENT | MULTICOMMENT;
 
 statement: print_stmt | asstmt;
-print_stmt: PRINT OPENBRAKET (value COMMA)* value? CLOSEBRACKET #Print
-          | PRINTLN OPENBRAKET (value COMMA)* value? CLOSEBRACKET #PrintLine
+print_stmt: PRINT OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET #Print
+          | PRINTLN OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET #PrintLine
           ;
-asstmt: VAR ID COLON value;
+asstmt: VAR ID COLON true_value;
 
+expression: arith_expr;
+arith_expr: value ((ADD | SUB | MUL | DIV) true_value)+;
+
+true_value: value | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | NUMBER | FLOAT | BOOLEAN
      | ID
@@ -51,6 +55,11 @@ OPENBRAKET: '(';
 CLOSEBRACKET: ')';
 COMMA: ',';
 
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+
 fragment LOWERCASE: [a-z];
 fragment UPPERCASE: [A-Z];
 fragment LETTER: LOWERCASE | UPPERCASE;
@@ -68,5 +77,3 @@ ID: LETTER (LETTER | NUMBER)*;
 
 SPACE: [ \t\r\n] -> skip;
 WS: [ \t\r\n\f]+ -> skip;
-
-NEWLINE: '\n';

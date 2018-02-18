@@ -1,3 +1,7 @@
 println("Hello World!")
 
 var hello: "Hello"
+var world: "World"
+
+var final: hello + world
+print(final)
