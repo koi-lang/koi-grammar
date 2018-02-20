@@ -12,13 +12,12 @@ line: comment | statement | expression;
 comment: COMMENT | MULTICOMMENT;
 
 statement: print_stmt | asstmt;
-print_stmt: PRINT OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET #Print
-          | PRINTLN OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET #PrintLine
-          ;
+print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
 asstmt: VAR ID COLON true_value;
 
-expression: arith_expr;
-arith_expr: value ((ADD | SUB | MUL | DIV) true_value)+;
+expression: arith_expr | compa_expr;
+arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
+compa_expr: NOT? value OPRAND=(GREATER | LESSER | EQUALS | GREQ | LEEQ | AND | OR) true_value;
 
 true_value: value | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
@@ -54,6 +53,18 @@ fragment GRAVE: '`';
 OPENBRAKET: '(';
 CLOSEBRACKET: ')';
 COMMA: ',';
+
+EQUALS: '=';
+AND: '%';
+OR: '||';
+NOT: '!';
+
+GREATER: '>';
+LESSER: '<';
+
+GREQ: GREATER EQUALS;
+LEEQ: LESSER EQUALS;
+NOTEQ: NOT EQUALS;
 
 ADD: '+';
 SUB: '-';
