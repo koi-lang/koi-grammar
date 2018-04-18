@@ -17,9 +17,13 @@ keyword: TRUE | FALSE
        | PRINT | PRINTLN
        | VAR;
 
-statement: print_stmt | asstmt;
+statement: print_stmt | local_asstmt;
+// print("Hello, "); println("World!")
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
-asstmt: VAR name COLON true_value;
+// var myVar = "Hello, World!"
+local_asstmt: var_type name COLON true_value // var myVar: "Hello"
+            | var_type name ARROW type // var myVar -> str
+            | var_type name ARROW type COLON true_value; // var myVar -> str: "Hello"
 
 expression: arith_expr | compa_expr;
 arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
@@ -30,6 +34,9 @@ value: SINGLESTRING | LITSTRING | MULTISTRING
      | NUMBER | FLOAT | BOOLEAN
      | name
      ;
+
+type: CHAR | STR | INT | FLOAT | BOOL | ID;
+var_type: VAR | type;
 
 /*
     Lexer Rules
@@ -46,6 +53,16 @@ PRINT: 'print';
 PRINTLN: 'println';
 
 VAR: 'var';
+
+    // Types
+CHAR: 'char';
+STR: 'str';
+INT: 'int';
+FLO: 'float';
+BOOL: 'bool';
+
+// Symbols
+ARROW: DASH GREATER;
 
 // Punctuation
 fragment HASHTAG: '#';
