@@ -1,7 +1,16 @@
 println("Hello World!")
 
+# I'm a comment
+
+#-
+    I'm a
+    multi-line comment
+ -#
+
 var hello: "Hello"
 var world: "World"
 
 var final: hello + world
 print(final)
+
+var !var: "I've got a keyword for a name!"

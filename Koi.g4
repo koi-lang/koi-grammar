@@ -11,9 +11,15 @@ line: comment | statement | expression;
 
 comment: COMMENT | MULTICOMMENT;
 
+// !var = "My Var"
+name: ID | NOT keyword;
+keyword: TRUE | FALSE
+       | PRINT | PRINTLN
+       | VAR;
+
 statement: print_stmt | asstmt;
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
-asstmt: VAR ID COLON true_value;
+asstmt: VAR name COLON true_value;
 
 expression: arith_expr | compa_expr;
 arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
@@ -22,7 +28,7 @@ compa_expr: NOT? value OPRAND=(GREATER | LESSER | EQUALS | GREQ | LEEQ | AND | O
 true_value: value | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | NUMBER | FLOAT | BOOLEAN
-     | ID
+     | name
      ;
 
 /*
