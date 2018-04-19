@@ -15,15 +15,16 @@ comment: COMMENT | MULTICOMMENT;
 name: ID | NOT keyword;
 keyword: TRUE | FALSE
        | PRINT | PRINTLN
-       | VAR;
+       | VAR | VAL
+       | type_;
 
 statement: print_stmt | local_asstmt;
 // print("Hello, "); println("World!")
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
 // var myVar = "Hello, World!"
-local_asstmt: var_type name COLON true_value // var myVar: "Hello"
-            | var_type name ARROW type_ // var myVar -> str
-            | var_type name ARROW type_ COLON true_value; // var myVar -> str: "Hello"
+local_asstmt: vars name COLON true_value // var myVar: "Hello"
+            | vars name ARROW type_ // var myVar -> str
+            | vars name ARROW type_ COLON true_value; // var myVar -> str: "Hello"
 
 expression: arith_expr | compa_expr;
 arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
@@ -35,8 +36,8 @@ value: SINGLESTRING | LITSTRING | MULTISTRING
      | name
      ;
 
-type_: CHAR | STR | INT | FLOAT | BOOL | ID;
-var_type: VAR | type_;
+type_: OBJ | CHAR | STR | INT | FLOAT | BOOL | NULL | ID;
+vars: VAR | VAL;
 
 /*
     Lexer Rules
@@ -53,13 +54,16 @@ PRINT: 'print';
 PRINTLN: 'println';
 
 VAR: 'var';
+VAL: 'val';
 
     // Types
+OBJ: 'obj';
 CHAR: 'char';
 STR: 'str';
 INT: 'int';
 FLO: 'float';
 BOOL: 'bool';
+NULL: 'null';
 
 // Symbols
 ARROW: DASH GREATER;
