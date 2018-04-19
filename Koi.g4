@@ -22,8 +22,8 @@ statement: print_stmt | local_asstmt;
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
 // var myVar = "Hello, World!"
 local_asstmt: var_type name COLON true_value // var myVar: "Hello"
-            | var_type name ARROW type // var myVar -> str
-            | var_type name ARROW type COLON true_value; // var myVar -> str: "Hello"
+            | var_type name ARROW type_ // var myVar -> str
+            | var_type name ARROW type_ COLON true_value; // var myVar -> str: "Hello"
 
 expression: arith_expr | compa_expr;
 arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
@@ -35,8 +35,8 @@ value: SINGLESTRING | LITSTRING | MULTISTRING
      | name
      ;
 
-type: CHAR | STR | INT | FLOAT | BOOL | ID;
-var_type: VAR | type;
+type_: CHAR | STR | INT | FLOAT | BOOL | ID;
+var_type: VAR | type_;
 
 /*
     Lexer Rules
