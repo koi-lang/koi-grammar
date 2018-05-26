@@ -81,6 +81,7 @@ fragment GRAVE: '`';
 OPENBRAKET: '(';
 CLOSEBRACKET: ')';
 COMMA: ',';
+UNDERSCORE: '_';
 
 EQUALS: '=';
 INFERRED: ':=';
@@ -113,7 +114,7 @@ NUMBER: [0-9]+;
 FLOAT: NUMBER DOT NUMBER;
 BOOLEAN: TRUE | FALSE;
 
-ID: LETTER (LETTER | NUMBER)*;
+ID: UNDERSCORE? LETTER (LETTER | NUMBER | UNDERSCORE)*;
 
 SPACE: [ \t\r\n] -> skip;
 WS: [ \t\r\n\f]+ -> skip;
