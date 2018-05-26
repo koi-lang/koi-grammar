@@ -11,7 +11,7 @@ line: comment | statement | expression;
 
 comment: COMMENT | MULTICOMMENT;
 
-// !var = "My Var"
+// !var := "My Var"
 name: ID | NOT keyword;
 keyword: TRUE | FALSE
        | PRINT | PRINTLN
@@ -21,14 +21,15 @@ keyword: TRUE | FALSE
 statement: print_stmt | local_asstmt;
 // print("Hello, "); println("World!")
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
-// var myVar = "Hello, World!"
-local_asstmt: vars name COLON true_value // var myVar: "Hello"
-            | vars name ARROW type_ // var myVar -> str
-            | vars name ARROW type_ COLON true_value; // var myVar -> str: "Hello"
+
+local_asstmt: vars_ name INFERRED true_value // var my_var := "Hello"
+            | name EQUALS true_value // my_var = "Hello"
+            | vars_ name COLON type_ // var my_var: str
+            | vars_ name COLON type_ EQUALS true_value; // var my_var: str = "Hello"
 
 expression: arith_expr | compa_expr;
 arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
-compa_expr: NOT? value OPRAND=(GREATER | LESSER | EQUALS | GREQ | LEEQ | AND | OR) true_value;
+compa_expr: NOT? value OPRAND=(GREATER | LESSER | EQUALS | GREQ | LEEQ) true_value;
 
 true_value: value | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
@@ -36,8 +37,8 @@ value: SINGLESTRING | LITSTRING | MULTISTRING
      | name
      ;
 
-type_: OBJ | CHAR | STR | INT | FLOAT | BOOL | NULL | ID;
-vars: VAR | VAL;
+type_: OBJ | CHAR | STR | INT | FLOAT | BOOL | NONE | ID;
+vars_: VAR | VAL;
 
 /*
     Lexer Rules
@@ -63,7 +64,7 @@ STR: 'str';
 INT: 'int';
 FLO: 'float';
 BOOL: 'bool';
-NULL: 'null';
+NONE: 'none';
 
 // Symbols
 ARROW: DASH GREATER;
@@ -82,6 +83,7 @@ CLOSEBRACKET: ')';
 COMMA: ',';
 
 EQUALS: '=';
+INFERRED: ':=';
 AND: '%';
 OR: '||';
 NOT: '!';
