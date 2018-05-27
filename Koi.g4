@@ -5,7 +5,8 @@ grammar Koi;
  */
 
 program: code EOF;
-code: (line SEMICOLON?)*;
+code: (line? ending)*;
+ending: NEWLINE | SEMICOLON;
 
 line: comment | statement | expression;
 
@@ -48,6 +49,8 @@ vars_: VAR | VAL;
 
 COMMENT: HASHTAG ~[\r\n]* -> skip;
 MULTICOMMENT: HASHTAG DASH .*? DASH HASHTAG -> skip;
+
+NEWLINE: [\r\n];
 
 // Keywords
 TRUE: 'true';
@@ -118,5 +121,4 @@ BOOLEAN: TRUE | FALSE;
 
 ID: UNDERSCORE? LETTER (LETTER | NUMBER | UNDERSCORE)*;
 
-SPACE: [ \t\r\n] -> skip;
-WS: [ \t\r\n\f]+ -> skip;
+SPACE: [ \t] -> skip;
