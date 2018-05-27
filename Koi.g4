@@ -11,7 +11,8 @@ line: comment | statement | expression;
 
 comment: COMMENT | MULTICOMMENT;
 
-// !var := "My Var"
+// var my_var := "My Var"
+// var !var := "My Var"
 name: ID | NOT keyword;
 keyword: TRUE | FALSE
        | PRINT | PRINTLN
@@ -19,7 +20,8 @@ keyword: TRUE | FALSE
        | type_;
 
 statement: print_stmt | local_asstmt;
-// print("Hello, "); println("World!")
+// print("Hello, ")
+// println("World!")
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
 
 local_asstmt: vars_ name INFERRED true_value // var my_var := "Hello"
@@ -33,7 +35,7 @@ compa_expr: NOT? value OPRAND=(GREATER | LESSER | EQUALS | GREQ | LEEQ) true_val
 
 true_value: value | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
-     | NUMBER | FLOAT | BOOLEAN
+     | NUMBER | FLOAT | TRUE | FALSE
      | name
      ;
 
