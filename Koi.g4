@@ -20,10 +20,11 @@ keyword: TRUE | FALSE
        | VAR | VAL
        | type_;
 
-statement: print_stmt | local_asstmt;
+statement: print_stmt | input_stmt | local_asstmt;
 // print("Hello, ")
 // println("World!")
 print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
+input_stmt: TYPE=(INPUT | INPUTLN) OPENBRAKET true_value? (COMMA ('limit' EQUALS) NUMBER)? CLOSEBRACKET;
 
 local_asstmt: vars_ name INFERRED true_value // var my_var := "Hello"
             | name EQUALS true_value // my_var = "Hello"
@@ -58,6 +59,9 @@ FALSE: 'false';
 
 PRINT: 'print';
 PRINTLN: 'println';
+
+INPUT: 'input';
+INPUTLN: 'inputln';
 
 VAR: 'var';
 VAL: 'val';
