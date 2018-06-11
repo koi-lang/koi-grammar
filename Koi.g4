@@ -23,8 +23,8 @@ keyword: TRUE | FALSE
 statement: print_stmt | input_stmt | local_asstmt;
 // print("Hello, ")
 // println("World!")
-print_stmt: TYPE=(PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
-input_stmt: TYPE=(INPUT | INPUTLN) OPENBRAKET true_value? (COMMA ('limit' EQUALS) NUMBER)? CLOSEBRACKET;
+print_stmt: (PRINT | PRINTLN) OPENBRAKET (true_value COMMA)* true_value? CLOSEBRACKET;
+input_stmt: (INPUT | INPUTLN) OPENBRAKET ('text' EQUALS)? text=true_value (COMMA ('limit' EQUALS)? limit=true_value)? CLOSEBRACKET;
 
 local_asstmt: vars_ name INFERRED true_value // var my_var := "Hello"
             | name EQUALS true_value // my_var = "Hello"
@@ -32,10 +32,10 @@ local_asstmt: vars_ name INFERRED true_value // var my_var := "Hello"
             | vars_ name COLON type_ EQUALS true_value; // var my_var: str = "Hello"
 
 expression: arith_expr | compa_expr;
-arith_expr: value OPRAND=(ADD | SUB | MUL | DIV) true_value;
-compa_expr: NOT? value OPRAND=(GREATER | LESSER | EQUALS | GREQ | LEEQ) true_value;
+arith_expr: value (ADD | SUB | MUL | DIV) true_value;
+compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ) true_value;
 
-true_value: value | expression;
+true_value: value | expression | input_stmt;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | NUMBER | FLOAT | TRUE | FALSE
      | name
