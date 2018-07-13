@@ -11,8 +11,8 @@ class KoiWalker(KoiListener):
     def enterPrint_stmt(self, ctx:KoiParser.Print_stmtContext):
         print(f"Print: {ctx.getText()}")
 
-    def enterAsstmt(self, ctx:KoiParser.AsstmtContext):
-        print(f"Assignment {ctx.getText()}:")
+    def enterLocal_asstmt(self, ctx:KoiParser.Local_asstmtContext):
+        print(f"Assignment: {ctx.getText()}")
 
     def enterExpression(self, ctx:KoiParser.ExpressionContext):
         print(f"Expression: {ctx.getText()}")

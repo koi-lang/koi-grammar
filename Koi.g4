@@ -14,7 +14,7 @@ comment: COMMENT | MULTICOMMENT;
 
 // var my_var := "My Var"
 // var !var := "My Var"
-name: ID | NOT keyword;
+name: ID | TEMP_ID | NOT keyword;
 keyword: TRUE | FALSE
        | PRINT | PRINTLN
        | VAR | VAL
@@ -37,11 +37,11 @@ compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ) true_value;
 
 true_value: value | expression | input_stmt;
 value: SINGLESTRING | LITSTRING | MULTISTRING
-     | NUMBER | FLOAT | TRUE | FALSE
+     | NUMBER | FLOAT | DECIMAL | TRUE | FALSE
      | name
      ;
 
-type_: OBJ | CHAR | STR | INT | FLOAT | BOOL | NONE | ID;
+type_: OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID;
 vars_: VAR | VAL;
 
 /*
@@ -119,10 +119,16 @@ SINGLESTRING: DOUBLEQUOTE ~["\r\n]* DOUBLEQUOTE;
 LITSTRING: SINGLEQUOTE ~['\r\n]* SINGLEQUOTE;
 MULTISTRING: GRAVE (~[`\r\n]+ | '\r'? '\n')* GRAVE;
 
+// 1.0f/1f
+FLOAT: NUMBER (DOT NUMBER)? 'f';
+// 1.0d/1d
+DECIMAL: NUMBER (DOT NUMBER)? 'd';
+// 1
 NUMBER: [0-9]+;
-FLOAT: NUMBER DOT NUMBER;
+// true/false
 BOOLEAN: TRUE | FALSE;
 
+TEMP_ID: UNDERSCORE;
 ID: UNDERSCORE? LETTER (LETTER | NUMBER | UNDERSCORE)*;
 
 SPACE: [ \t] -> skip;

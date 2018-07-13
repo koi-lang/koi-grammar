@@ -7,10 +7,14 @@ println("Hello World!")
     multi-line comment
  -#
 
-var hello: "Hello"
-var world: "World"
+var hello := "Hello"
+var world := "World"
 
-var final: hello + world
+var final := hello + world
 print(final)
 
-var !var: "I've got a keyword for a name!"
+var !var := "I've got a keyword for a name!"
+
+var kint := 1
+var kfloat := 1.0f
+var kdeci := 1.0d
