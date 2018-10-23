@@ -1,1 +1,1 @@
-antlr4 -Dlanguage=Python3 Koi.g4 -o E:/GitHub/koi-grammar\gen
+antlr4 -Dlanguage=Python3 Koi.g4 -o gen
