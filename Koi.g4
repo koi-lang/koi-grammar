@@ -5,7 +5,7 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | function_block | while_block | for_block | if_stream) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | while_block | for_block | if_stream) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
@@ -21,7 +21,7 @@ keyword: TRUE | FALSE
        | type_;
 
 statement: function_call | local_asstmt;
-function_call: CALL funcName=name OPEN_PARENTHESIS ((paramNames+=name EQUALS)? paramValues+=true_value ((paramNames+=name EQUALS)? paramValues+=true_value)*)? CLOSE_PARENTHESIS;
+function_call: CALL funcName=name OPEN_PARENTHESIS ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)? CLOSE_PARENTHESIS;
 
 local_asstmt: VAR name INFERRED true_value // var my_var := "Hello"
             | name EQUALS true_value // my_var = "Hello"
@@ -42,21 +42,27 @@ value_change: value (INCREASE | DECREASE);
 
 type_: OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID | type_ OPEN_BRACKET CLOSE_BRACKET;
 
+block: code_block | return_block | break_block;
+code_block: OPEN_BRACE line* CLOSE_BRACE;
+return_block: OPEN_BRACE line* return_stmt CLOSE_BRACE;
+break_block: OPEN_BRACE line* BREAK? CLOSE_BRACE;
+
+parameter_set: OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS;
 parameter: name COLON type_ (EQUALS value)?;
-function_block: FUNCTION name OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS (ARROW returnType=type_)? OPEN_BRACE line* return_stmt CLOSE_BRACE;
+function_block: FUNCTION name parameter_set (ARROW returnType=type_)? block;
 return_stmt: RETURN true_value;
 
-while_block: WHILE compa_list OPEN_BRACE line* BREAK? CLOSE_BRACE;
-for_block: FOR name IN with_length OPEN_BRACE line* BREAK? CLOSE_BRACE;
+while_block: WHILE compa_list block;
+for_block: FOR name IN with_length block;
 
 range_: INTEGER DOUBLE_DOT INTEGER;
 list_: OPEN_BRACKET true_value* CLOSE_BRACKET;
 with_length: range_ | list_;
 
 if_stream: if_block elf_block* else_block?;
-if_block: IF compa_list OPEN_BRACE line* CLOSE_BRACE;
-elf_block: ELF compa_list OPEN_BRACE line* CLOSE_BRACE;
-else_block: ELSE OPEN_BRACE line* CLOSE_BRACE;
+if_block: IF compa_list block;
+elf_block: ELF compa_list block;
+else_block: ELSE block;
 
 compa_list: (compa_expr | or_compa | and_compa)+;
 or_compa: compa_expr OR compa_expr;
