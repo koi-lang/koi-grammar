@@ -5,7 +5,7 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | function_block | while_block | for_block | if_stream)(SEMICOLON line)*;
+line: (comment | statement | expression | function_block | while_block | for_block | if_stream) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
@@ -14,17 +14,14 @@ comment: COMMENT | MULTICOMMENT;
 // var !var := "My Var"
 name: ID | TEMP_ID | NOT keyword;
 keyword: TRUE | FALSE
-       | PRINT | PRINTLN
+       // | PRINT | PRINTLN
        | VAR
        | CALL
        | RETURN
        | type_;
 
-statement: print_stmt | input_stmt | local_asstmt;
-// print("Hello, ")
-// println("World!")
-print_stmt: CALL (PRINT | PRINTLN) OPEN_PARENTHESIS (true_value COMMA)* true_value? CLOSE_PARENTHESIS;
-input_stmt: CALL (INPUT | INPUTLN) OPEN_PARENTHESIS ('text' EQUALS)? text=true_value (COMMA ('limit' EQUALS)? limit=true_value)? CLOSE_PARENTHESIS;
+statement: function_call | local_asstmt;
+function_call: CALL funcName=name OPEN_PARENTHESIS ((paramNames+=name EQUALS)? paramValues+=true_value ((paramNames+=name EQUALS)? paramValues+=true_value)*)? CLOSE_PARENTHESIS;
 
 local_asstmt: VAR name INFERRED true_value // var my_var := "Hello"
             | name EQUALS true_value // my_var = "Hello"
@@ -36,7 +33,7 @@ expression: arith_expr | compa_expr | value_change;
 arith_expr: value (ADD | SUB | MUL | DIV) true_value;
 compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INEQUALITY | LESS_OR_EQUAL | GREAT_OR_EQUAL) true_value;
 
-true_value: value (INCREASE | DECREASE)? | expression | input_stmt;
+true_value: value (INCREASE | DECREASE)? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | INTEGER | FLOAT | DECIMAL | NOT? (TRUE | FALSE)
      | name
@@ -46,7 +43,7 @@ value_change: value (INCREASE | DECREASE);
 type_: OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID | type_ OPEN_BRACKET CLOSE_BRACKET;
 
 parameter: name COLON type_ (EQUALS value)?;
-function_block: FUNCTION name OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS (ARROW type_)? OPEN_BRACE line* return_stmt CLOSE_BRACE;
+function_block: FUNCTION name OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS (ARROW returnType=type_)? OPEN_BRACE line* return_stmt CLOSE_BRACE;
 return_stmt: RETURN true_value;
 
 while_block: WHILE compa_list OPEN_BRACE line* BREAK? CLOSE_BRACE;
@@ -77,9 +74,6 @@ MULTICOMMENT: HASHTAG DASH .*? DASH HASHTAG -> skip;
 // Keywords
 TRUE: 'true';
 FALSE: 'false';
-
-PRINT: 'print';
-PRINTLN: 'println';
 
 INPUT: 'input';
 INPUTLN: 'inputln';
