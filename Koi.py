@@ -1,7 +1,7 @@
 import antlr4
-from KoiLexer import KoiLexer
-from KoiListener import KoiListener
-from KoiParser import KoiParser
+from gen.KoiLexer import KoiLexer
+from gen.KoiListener import KoiListener
+from gen.KoiParser import KoiParser
 
 
 class KoiWalker(KoiListener):

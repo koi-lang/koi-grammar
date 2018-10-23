@@ -1,5 +1,3 @@
-println("Hello World!")
-
 # I'm a comment
 
 #-
@@ -7,14 +5,40 @@ println("Hello World!")
     multi-line comment
  -#
 
-var hello := "Hello"
-var world := "World"
+fun main(args: str[]) -> int {
+    call println("Hello, World!")
 
-var final := hello + world
-print(final)
+    var hello := "Hello"
+    var world := "World"
 
-var !var := "I've got a keyword for a name!"
+    var final := hello + world
+    call println(final)
 
-var kint := 1
-var kfloat := 1.0f
-var kdeci := 1.0d
+    var !var := "I've got a keyword for a name!"
+
+    var kint := 1
+    var kfloat := 1.0f
+    var kdeci := 1.0d
+
+    var count := 5
+    while count > 0 {
+        call println("Count: " + count)
+        count--
+    }
+
+    for n in 0..10 {
+        call println("N: " + n)
+    }
+
+    if 5 == 7 {
+        call println("Uh, this isn't supposed to happen...")
+    }
+    elf 5 <= 2 || 5 >= 7 {
+        call println("This also shouldn't happen...")
+    }
+    else {
+        call println("That's more like it!")
+    }
+
+    return 0
+}
