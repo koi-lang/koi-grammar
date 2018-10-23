@@ -136,7 +136,7 @@ UNDERSCORE: '_';
 
 EQUALS: '=';
 INFERRED: ':=';
-AND: '%';
+AND: '&&';
 OR: '||';
 NOT: '!';
 
@@ -162,6 +162,7 @@ ADD: '+';
 SUB: '-';
 MUL: '*';
 DIV: '/';
+MOD: '%';
 
 INCREASE: '++';
 DECREASE: '--';
