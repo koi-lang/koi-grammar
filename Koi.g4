@@ -53,7 +53,7 @@ function_block: FUNCTION name parameter_set (ARROW returnType=type_)? block;
 return_stmt: RETURN true_value;
 
 while_block: WHILE compa_list block;
-for_block: FOR name IN with_length block;
+for_block: FOR name IN (with_length | name) block;
 
 range_: INTEGER DOUBLE_DOT INTEGER;
 list_: OPEN_BRACKET true_value* CLOSE_BRACKET;
