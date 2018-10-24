@@ -23,10 +23,10 @@ keyword: TRUE | FALSE
 statement: function_call | local_asstmt;
 function_call: CALL funcName=name OPEN_PARENTHESIS ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)? CLOSE_PARENTHESIS;
 
-local_asstmt: VAR name INFERRED true_value // var my_var := "Hello"
-            | name EQUALS true_value // my_var = "Hello"
-            | VAR name COLON type_ // var my_var: str
-            | VAR name COLON type_ EQUALS true_value; // var my_var: str = "Hello"
+local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
+            // | name EQUALS true_value // my_var = "Hello"
+            // | VAR name COLON type_ // var my_var: str
+            VAR name COLON type_ EQUALS true_value; // var my_var: str = "Hello"
 
 expression: arith_expr | compa_expr | value_change;
 // FIXME: Should use true_value instead of value
@@ -36,9 +36,11 @@ compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INE
 true_value: value (INCREASE | DECREASE)? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | INTEGER | FLOAT | DECIMAL | NOT? (TRUE | FALSE)
-     | name
+     | name | list_
      ;
 value_change: value (INCREASE | DECREASE);
+
+list_: OPEN_BRACKET (value COMMA)* value? CLOSE_BRACKET;
 
 type_: OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID | type_ OPEN_BRACKET CLOSE_BRACKET;
 
@@ -56,7 +58,6 @@ while_block: WHILE compa_list block;
 for_block: FOR name COLON type_ IN (with_length | name) block;
 
 range_: INTEGER DOUBLE_DOT INTEGER;
-list_: OPEN_BRACKET true_value* CLOSE_BRACKET;
 with_length: range_ | list_;
 
 if_stream: if_block elf_block* else_block?;
