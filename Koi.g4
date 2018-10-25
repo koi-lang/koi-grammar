@@ -65,9 +65,7 @@ if_block: IF compa_list block;
 elf_block: ELF compa_list block;
 else_block: ELSE block;
 
-compa_list: (compa_expr | or_compa | and_compa)+;
-or_compa: compa_expr OR compa_expr;
-and_compa: compa_expr AND compa_expr;
+compa_list: comparisons+=compa_expr (settings+=(OR | AND) comparisons+=compa_expr)*;
 
 /*
     Lexer Rules
