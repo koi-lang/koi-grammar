@@ -5,14 +5,14 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
 
 // var my_var := "My Var"
 // var !var := "My Var"
-name: ID | TEMP_ID | NOT keyword;
+name: (THIS DOT)? (ID | TEMP_ID | NOT keyword);
 keyword: TRUE | FALSE
        // | PRINT | PRINTLN
        | VAR
@@ -20,8 +20,11 @@ keyword: TRUE | FALSE
        | RETURN
        | type_;
 
-statement: function_call | local_asstmt | import_stmt;
-function_call: CALL funcName=name OPEN_PARENTHESIS ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)? CLOSE_PARENTHESIS;
+statement: function_call | local_asstmt | import_stmt | class_new;
+call_parameter_set: ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)?;
+method_call: funcName=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS;
+function_call: CALL method_call;
+class_new: NEW className=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS (DOT method_call)*;
 
 local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
             // | name EQUALS true_value // my_var = "Hello"
@@ -36,7 +39,7 @@ compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INE
 true_value: value (INCREASE | DECREASE)? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | INTEGER | FLOAT | DECIMAL | NOT? (TRUE | FALSE)
-     | name | list_
+     | name | list_ | function_call
      ;
 value_change: value (INCREASE | DECREASE);
 
@@ -44,17 +47,18 @@ list_: OPEN_BRACKET (value COMMA)* value? CLOSE_BRACKET;
 
 type_: OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID | type_ OPEN_BRACKET CLOSE_BRACKET;
 
-block: code_block | return_block | break_block;
+block: code_block | return_block | break_block | inner_class_block;
 code_block: OPEN_BRACE line* CLOSE_BRACE;
 return_block: OPEN_BRACE line* return_stmt CLOSE_BRACE;
 break_block: OPEN_BRACE line* BREAK? CLOSE_BRACE;
+inner_class_block: OPEN_BRACE constructor_block method_block* CLOSE_BRACE;
 
 parameter_set: OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS;
 parameter: name COLON type_ (EQUALS value)? #parameterNorm
          | name COLON type_ TRIPLE_DOT #parameterVarArg
          ;
-function_block: FUNCTION name parameter_set (ARROW returnType=type_)? block
-              | NATIVE FUNCTION name parameter_set (ARROW returnType=type_)?
+function_block: FUNCTION name parameter_set (ARROW returnType=type_) block
+              | NATIVE FUNCTION name parameter_set (ARROW returnType=type_)
               ;
 procedure_block: PROCEDURE name parameter_set block
                | NATIVE PROCEDURE name parameter_set
@@ -77,6 +81,12 @@ compa_list: comparisons+=compa_expr (settings+=(OR | AND) comparisons+=compa_exp
 package_name: (folders+=ID DOUBLE_COLON)* last=ID;
 import_stmt: (CORE | STANDARD | LOCAL) IMPORT package_name;
 
+class_block: CLASS name block;
+method_block: METH procedure_block
+            | METH function_block
+            ;
+constructor_block: CONSTRUCTOR parameter_set block;
+
 /*
     Lexer Rules
  */
@@ -92,9 +102,6 @@ NATIVE: 'native';
 TRUE: 'true';
 FALSE: 'false';
 
-INPUT: 'input';
-INPUTLN: 'inputln';
-
 VAR: 'var';
 
 WHILE: 'while';
@@ -105,6 +112,12 @@ BREAK: 'break';
 
 FUNCTION: 'fun';
 PROCEDURE: 'pro';
+
+CLASS: 'class';
+CONSTRUCTOR: 'constructor';
+METH: 'meth';
+THIS: 'this';
+NEW: 'new';
 
 CALL: 'call';
 RETURN: 'return';
@@ -140,7 +153,7 @@ fragment DASH: '-';
 SEMICOLON: ';';
 COLON: ':';
 DOUBLE_COLON: '::';
-fragment DOT: '.';
+DOT: '.';
 DOUBLE_DOT: '..';
 TRIPLE_DOT: '...';
 fragment DOUBLE_QUOTE: '"';
