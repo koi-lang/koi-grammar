@@ -12,7 +12,7 @@ comment: COMMENT | MULTICOMMENT;
 
 // var my_var := "My Var"
 // var !var := "My Var"
-name: (THIS DOT)? (ID | TEMP_ID | NOT keyword);
+name: (THIS DOT)? (ID | TEMP_ID | NOT keyword) | THIS;
 keyword: TRUE | FALSE
        // | PRINT | PRINTLN
        | VAR
