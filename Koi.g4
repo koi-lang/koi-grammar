@@ -5,7 +5,7 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | block | function_block | while_block | for_block | if_stream) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
@@ -20,7 +20,7 @@ keyword: TRUE | FALSE
        | RETURN
        | type_;
 
-statement: function_call | local_asstmt;
+statement: function_call | local_asstmt | import_stmt;
 function_call: CALL funcName=name OPEN_PARENTHESIS ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)? CLOSE_PARENTHESIS;
 
 local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
@@ -50,8 +50,15 @@ return_block: OPEN_BRACE line* return_stmt CLOSE_BRACE;
 break_block: OPEN_BRACE line* BREAK? CLOSE_BRACE;
 
 parameter_set: OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS;
-parameter: name COLON type_ (EQUALS value)?;
-function_block: FUNCTION name parameter_set (ARROW returnType=type_)? block;
+parameter: name COLON type_ (EQUALS value)? #parameterNorm
+         | name COLON type_ TRIPLE_DOT #parameterVarArg
+         ;
+function_block: FUNCTION name parameter_set (ARROW returnType=type_)? block
+              | NATIVE FUNCTION name parameter_set (ARROW returnType=type_)?
+              ;
+procedure_block: PROCEDURE name parameter_set block
+               | NATIVE PROCEDURE name parameter_set
+               ;
 return_stmt: RETURN true_value;
 
 while_block: WHILE compa_list block;
@@ -67,6 +74,9 @@ else_block: ELSE block;
 
 compa_list: comparisons+=compa_expr (settings+=(OR | AND) comparisons+=compa_expr)*;
 
+package_name: (folders+=ID DOUBLE_COLON)* last=ID;
+import_stmt: (CORE | STANDARD | LOCAL) IMPORT package_name;
+
 /*
     Lexer Rules
  */
@@ -77,6 +87,8 @@ MULTICOMMENT: HASHTAG DASH .*? DASH HASHTAG -> skip;
 // NEWLINE: [\r\n]+ -> skip;
 
 // Keywords
+NATIVE: 'native';
+
 TRUE: 'true';
 FALSE: 'false';
 
@@ -85,20 +97,26 @@ INPUTLN: 'inputln';
 
 VAR: 'var';
 
-CALL: 'call';
-
-RETURN: 'return';
-
 WHILE: 'while';
 FOR: 'for';
 
 IN: 'in';
-
 BREAK: 'break';
+
+FUNCTION: 'fun';
+PROCEDURE: 'pro';
+
+CALL: 'call';
+RETURN: 'return';
 
 IF: 'if';
 ELF: 'elf';
 ELSE: 'else';
+
+IMPORT: 'import';
+CORE: 'core';
+STANDARD: 'std';
+LOCAL: 'local';
 
 // OR: 'or';
 // AND: 'and';
@@ -113,8 +131,6 @@ FLO: 'float';
 BOOL: 'bool';
 NONE: 'none';
 
-FUNCTION: 'fun';
-
 // Symbols
 ARROW: DASH GREATER;
 
@@ -123,8 +139,10 @@ fragment HASHTAG: '#';
 fragment DASH: '-';
 SEMICOLON: ';';
 COLON: ':';
+DOUBLE_COLON: '::';
 fragment DOT: '.';
 DOUBLE_DOT: '..';
+TRIPLE_DOT: '...';
 fragment DOUBLE_QUOTE: '"';
 fragment SINGLE_QUOTE: '\'';
 fragment GRAVE: '`';
