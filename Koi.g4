@@ -51,7 +51,7 @@ block: code_block | return_block | break_block | inner_class_block;
 code_block: OPEN_BRACE line* CLOSE_BRACE;
 return_block: OPEN_BRACE line* return_stmt CLOSE_BRACE;
 break_block: OPEN_BRACE line* BREAK? CLOSE_BRACE;
-inner_class_block: OPEN_BRACE constructor_block method_block* CLOSE_BRACE;
+inner_class_block: OPEN_BRACE init_block constructor_block method_block* CLOSE_BRACE;
 
 parameter_set: OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS;
 parameter: name COLON type_ (EQUALS value)? #parameterNorm
@@ -86,6 +86,7 @@ method_block: METH procedure_block
             | METH function_block
             ;
 constructor_block: CONSTRUCTOR parameter_set block;
+init_block: INIT block;
 
 /*
     Lexer Rules
@@ -118,6 +119,7 @@ CONSTRUCTOR: 'constructor';
 METH: 'meth';
 THIS: 'this';
 NEW: 'new';
+INIT: 'init';
 
 CALL: 'call';
 RETURN: 'return';
