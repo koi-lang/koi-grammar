@@ -23,7 +23,7 @@ keyword: TRUE | FALSE
 statement: function_call | local_asstmt | import_stmt | class_new;
 call_parameter_set: ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)?;
 method_call: funcName=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS;
-function_call: CALL method_call;
+function_call: CALL (method_call | name) (DOT method_call)*;
 class_new: NEW className=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS (DOT method_call)*;
 
 local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
@@ -39,7 +39,7 @@ compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INE
 true_value: value (INCREASE | DECREASE)? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
      | INTEGER | FLOAT | DECIMAL | NOT? (TRUE | FALSE)
-     | name | list_ | function_call
+     | name | list_ | function_call | class_new
      ;
 value_change: value (INCREASE | DECREASE);
 
