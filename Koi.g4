@@ -26,15 +26,14 @@ method_call: funcName=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS
 function_call: CALL (method_call | name) (DOT method_call)*;
 class_new: NEW className=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS (DOT method_call)*;
 
-local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
-            // | name EQUALS true_value // my_var = "Hello"
-            // | VAR name COLON type_ // var my_var: str
-            VAR name COLON type_ EQUALS true_value; // var my_var: str = "Hello"
+local_asstmt: VAR name COLON type_ EQUALS true_value
+            | name EQUALS true_value
+            ; // var my_var: str = "Hello"
 
 expression: arith_expr | compa_expr | value_change | half_compa;
 // FIXME: Should use true_value instead of value
 arith_expr: value (ADD | SUB | MUL | DIV) true_value;
-compa_expr: NOT? value (GREATER | LESSER | GREQ | LEEQ | EQUALITY | INEQUALITY) true_value;
+compa_expr: NOT? value ((GREATER | LESSER | GREQ | LEEQ | EQUALITY | INEQUALITY) true_value)?;
 half_compa: NOT? comp=(GREATER | LESSER | GREQ | LEEQ) true_value;
 
 true_value: value (INCREASE | DECREASE)? | expression;
