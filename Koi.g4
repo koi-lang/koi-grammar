@@ -34,8 +34,8 @@ local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
 expression: arith_expr | compa_expr | value_change | half_compa;
 // FIXME: Should use true_value instead of value
 arith_expr: value (ADD | SUB | MUL | DIV) true_value;
-compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INEQUALITY | LESS_OR_EQUAL | GREAT_OR_EQUAL) true_value;
-half_compa: NOT? comp=(GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INEQUALITY | LESS_OR_EQUAL | GREAT_OR_EQUAL) true_value;
+compa_expr: NOT? value (GREATER | LESSER | GREQ | LEEQ | EQUALITY | INEQUALITY) true_value;
+half_compa: NOT? comp=(GREATER | LESSER | GREQ | LEEQ) true_value;
 
 true_value: value (INCREASE | DECREASE)? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
@@ -182,8 +182,6 @@ NOT: '!';
 
 EQUALITY: EQUALS EQUALS;
 INEQUALITY: NOT EQUALS;
-LESS_OR_EQUAL: LESSER EQUALS;
-GREAT_OR_EQUAL: GREATER EQUALS;
 
 GREATER: '>';
 LESSER: '<';
