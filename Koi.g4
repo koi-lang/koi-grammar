@@ -5,7 +5,7 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when_block) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
@@ -31,10 +31,11 @@ local_asstmt: // VAR name INFERRED true_value // var my_var := "Hello"
             // | VAR name COLON type_ // var my_var: str
             VAR name COLON type_ EQUALS true_value; // var my_var: str = "Hello"
 
-expression: arith_expr | compa_expr | value_change;
+expression: arith_expr | compa_expr | value_change | half_compa;
 // FIXME: Should use true_value instead of value
 arith_expr: value (ADD | SUB | MUL | DIV) true_value;
 compa_expr: NOT? value (GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INEQUALITY | LESS_OR_EQUAL | GREAT_OR_EQUAL) true_value;
+half_compa: NOT? comp=(GREATER | LESSER | EQUALS | GREQ | LEEQ | EQUALITY | INEQUALITY | LESS_OR_EQUAL | GREAT_OR_EQUAL) true_value;
 
 true_value: value (INCREASE | DECREASE)? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
@@ -88,6 +89,10 @@ method_block: METH procedure_block
 constructor_block: CONSTRUCTOR parameter_set block;
 init_block: INIT block;
 
+when_block: WHEN true_value OPEN_BRACE is_block* when_else? CLOSE_BRACE;
+is_block: IS (half_compa | true_value) OPEN_BRACE line* CLOSE_BRACE;
+when_else: ELSE OPEN_BRACE line* CLOSE_BRACE;
+
 /*
     Lexer Rules
  */
@@ -127,6 +132,9 @@ RETURN: 'return';
 IF: 'if';
 ELF: 'elf';
 ELSE: 'else';
+
+WHEN: 'when';
+IS: 'is';
 
 IMPORT: 'import';
 CORE: 'core';
