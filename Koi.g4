@@ -5,7 +5,7 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when_block) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when_block | enum_block) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
@@ -92,6 +92,8 @@ when_block: WHEN true_value OPEN_BRACE is_block* when_else? CLOSE_BRACE;
 is_block: IS (half_compa | true_value) OPEN_BRACE line* CLOSE_BRACE;
 when_else: ELSE OPEN_BRACE line* CLOSE_BRACE;
 
+enum_block: ENUM name OPEN_BRACE (ID COMMA)* ID? CLOSE_BRACE;
+
 /*
     Lexer Rules
  */
@@ -139,6 +141,8 @@ IMPORT: 'import';
 CORE: 'core';
 STANDARD: 'std';
 LOCAL: 'local';
+
+ENUM: 'enum';
 
 // OR: 'or';
 // AND: 'and';
