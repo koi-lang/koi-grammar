@@ -5,14 +5,14 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when_block | enum_block) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when_block | enum_block | struct_block) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
 
 // var my_var := "My Var"
 // var !var := "My Var"
-name: (THIS DOT)? (ID | TEMP_ID | NOT keyword) | THIS;
+name: (THIS DOT)? ((ID | TEMP_ID | NOT keyword) DOT)* (ID | TEMP_ID | NOT keyword) | THIS;
 keyword: TRUE | FALSE
        // | PRINT | PRINTLN
        | VAR
@@ -28,7 +28,8 @@ class_new: NEW className=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHE
 
 local_asstmt: VAR name COLON type_ EQUALS true_value
             | name EQUALS true_value
-            ; // var my_var: str = "Hello"
+            | VAR name COLON type_
+            ;
 
 expression: arith_expr | compa_expr | value_change | half_compa;
 // FIXME: Should use true_value instead of value
@@ -94,6 +95,9 @@ when_else: ELSE OPEN_BRACE line* CLOSE_BRACE;
 
 enum_block: ENUM name OPEN_BRACE (ID COMMA)* ID? CLOSE_BRACE;
 
+struct_block: STRUCT name OPEN_BRACE struct_set* CLOSE_BRACE;
+struct_set: name COLON type_;
+
 /*
     Lexer Rules
  */
@@ -143,6 +147,7 @@ STANDARD: 'std';
 LOCAL: 'local';
 
 ENUM: 'enum';
+STRUCT: 'struct';
 
 // OR: 'or';
 // AND: 'and';
