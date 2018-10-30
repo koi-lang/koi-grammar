@@ -12,7 +12,7 @@ comment: COMMENT | MULTICOMMENT;
 
 // var my_var := "My Var"
 // var !var := "My Var"
-name: (THIS DOT)? ((ID | TEMP_ID | NOT keyword) DOT)* (ID | TEMP_ID | NOT keyword) | THIS;
+name: (THIS DOT)? ((ID | TEMP_ID | EXCLAMATION keyword) accessor)* (ID | TEMP_ID | EXCLAMATION keyword) | THIS;
 keyword: TRUE | FALSE
        // | PRINT | PRINTLN
        | VAR
@@ -20,11 +20,13 @@ keyword: TRUE | FALSE
        | RETURN
        | type_;
 
+accessor: DOT | SAFE_CALL | NULL_CHECK_ACCESS;
+
 statement: function_call | local_asstmt | import_stmt | class_new;
 call_parameter_set: ((paramNames+=name EQUALS)? paramValues+=true_value COMMA)* ((paramNames+=name EQUALS)? paramValues+=true_value)?;
 method_call: funcName=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS;
-function_call: CALL (method_call | name) (DOT method_call)*;
-class_new: NEW className=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS (DOT method_call)*;
+function_call: CALL (method_call | name) (accessor method_call)*;
+class_new: NEW className=name OPEN_PARENTHESIS call_parameter_set CLOSE_PARENTHESIS (accessor method_call)*;
 
 local_asstmt: VAR name COLON type_ EQUALS true_value
             | name EQUALS true_value
@@ -34,19 +36,19 @@ local_asstmt: VAR name COLON type_ EQUALS true_value
 expression: arith_expr | compa_expr | value_change | half_compa;
 // FIXME: Should use true_value instead of value
 arith_expr: value (ADD | SUB | MUL | DIV) true_value;
-compa_expr: NOT? value ((GREATER | LESSER | GREQ | LEEQ | EQUALITY | INEQUALITY) true_value)?;
-half_compa: NOT? comp=(GREATER | LESSER | GREQ | LEEQ) true_value;
+compa_expr: EXCLAMATION? value ((GREATER | LESSER | GREQ | LEEQ | EQUALITY | INEQUALITY) true_value)?;
+half_compa: EXCLAMATION? comp=(GREATER | LESSER | GREQ | LEEQ) true_value;
 
-true_value: value (INCREASE | DECREASE)? | expression;
+true_value: value (INCREASE | DECREASE)? NULL_CHECK? | expression;
 value: SINGLESTRING | LITSTRING | MULTISTRING
-     | INTEGER | FLOAT | DECIMAL | NOT? (TRUE | FALSE)
+     | INTEGER | FLOAT | DECIMAL | EXCLAMATION? (TRUE | FALSE) | NONE
      | name | list_ | function_call | class_new
      ;
 value_change: value (INCREASE | DECREASE);
 
 list_: OPEN_BRACKET (value COMMA)* value? CLOSE_BRACKET;
 
-type_: OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID | type_ OPEN_BRACKET CLOSE_BRACKET;
+type_: (OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID) (OPEN_BRACKET CLOSE_BRACKET)? QUESTION?;
 
 block: code_block | return_block | break_block | inner_class_block;
 code_block: OPEN_BRACE line* CLOSE_BRACE;
@@ -113,6 +115,8 @@ NATIVE: 'native';
 TRUE: 'true';
 FALSE: 'false';
 
+NONE: 'none';
+
 VAR: 'var';
 
 WHILE: 'while';
@@ -149,10 +153,6 @@ LOCAL: 'local';
 ENUM: 'enum';
 STRUCT: 'struct';
 
-// OR: 'or';
-// AND: 'and';
-// NOT: 'not';
-
     // Types
 OBJ: 'obj';
 CHAR: 'char';
@@ -160,7 +160,6 @@ STR: 'str';
 INT: 'int';
 FLO: 'float';
 BOOL: 'bool';
-NONE: 'none';
 
 // Symbols
 ARROW: DASH GREATER;
@@ -181,15 +180,16 @@ OPEN_PARENTHESIS: '(';
 CLOSE_PARENTHESIS: ')';
 COMMA: ',';
 UNDERSCORE: '_';
+QUESTION: '?';
+EXCLAMATION: '!';
 
 EQUALS: '=';
 INFERRED: ':=';
 AND: '&&';
 OR: '||';
-NOT: '!';
 
 EQUALITY: EQUALS EQUALS;
-INEQUALITY: NOT EQUALS;
+INEQUALITY: EXCLAMATION EQUALS;
 
 GREATER: '>';
 LESSER: '<';
@@ -202,7 +202,7 @@ CLOSE_BRACE: '}';
 
 GREQ: GREATER EQUALS;
 LEEQ: LESSER EQUALS;
-NOTEQ: NOT EQUALS;
+NOTEQ: EXCLAMATION EQUALS;
 
 ADD: '+';
 SUB: '-';
@@ -212,6 +212,10 @@ MOD: '%';
 
 INCREASE: '++';
 DECREASE: '--';
+
+SAFE_CALL: QUESTION DOT;
+NULL_CHECK: EXCLAMATION EXCLAMATION;
+NULL_CHECK_ACCESS: EXCLAMATION EXCLAMATION DOT;
 
 fragment LOWERCASE: [a-z];
 fragment UPPERCASE: [A-Z];
