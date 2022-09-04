@@ -92,7 +92,7 @@ constructor_block: CONSTRUCTOR parameter_set block;
 init_block: INIT block;
 
 when_block: WHEN true_value OPEN_BRACE is_block* when_else? CLOSE_BRACE;
-is_block: IS (half_compa | true_value) OPEN_BRACE line* CLOSE_BRACE;
+is_block: IS (half_compa | true_value) (OPEN_BRACE line* CLOSE_BRACE | ARROW line);
 when_else: ELSE OPEN_BRACE line* CLOSE_BRACE;
 
 enum_block: ENUM name OPEN_BRACE (ID COMMA)* ID? CLOSE_BRACE;
