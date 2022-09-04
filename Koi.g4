@@ -60,7 +60,7 @@ parameter_set: OPEN_PARENTHESIS (parameter COMMA)* parameter? CLOSE_PARENTHESIS;
 parameter: name COLON type_ (EQUALS value)? #parameterNorm
          | name COLON type_ TRIPLE_DOT #parameterVarArg
          ;
-function_block: FUNCTION name parameter_set (ARROW returnType=type_) block
+function_block: FUNCTION name parameter_set (ARROW returnType=type_) (block | FAT_ARROW line)
               | NATIVE FUNCTION name parameter_set (ARROW returnType=type_)
               ;
 procedure_block: PROCEDURE name parameter_set block
@@ -82,7 +82,7 @@ else_block: ELSE block;
 compa_list: comparisons+=compa_expr (settings+=(OR | AND) comparisons+=compa_expr)*;
 
 package_name: (folders+=ID DOUBLE_COLON)* last=ID;
-import_stmt: (CORE | STANDARD | LOCAL) IMPORT package_name;
+import_stmt: IMPORT (CORE | STANDARD | LOCAL) DOUBLE_COLON package_name;
 
 class_block: CLASS name block;
 method_block: METH procedure_block
@@ -92,8 +92,8 @@ constructor_block: CONSTRUCTOR parameter_set block;
 init_block: INIT block;
 
 when_block: WHEN true_value OPEN_BRACE is_block* when_else? CLOSE_BRACE;
-is_block: IS (half_compa | true_value) (OPEN_BRACE line* CLOSE_BRACE | ARROW line);
-when_else: ELSE OPEN_BRACE line* CLOSE_BRACE;
+is_block: IS (half_compa | true_value) (OPEN_BRACE line* CLOSE_BRACE | FAT_ARROW line);
+when_else: ELSE (OPEN_BRACE line* CLOSE_BRACE | FAT_ARROW line);
 
 enum_block: ENUM name OPEN_BRACE (ID COMMA)* ID? CLOSE_BRACE;
 
@@ -153,7 +153,7 @@ LOCAL: 'local';
 ENUM: 'enum';
 STRUCT: 'struct';
 
-    // Types
+// Types
 OBJ: 'obj';
 CHAR: 'char';
 STR: 'str';
@@ -163,6 +163,7 @@ BOOL: 'bool';
 
 // Symbols
 ARROW: DASH GREATER;
+FAT_ARROW: EQUALS GREATER;
 
 // Punctuation
 fragment HASHTAG: '#';
