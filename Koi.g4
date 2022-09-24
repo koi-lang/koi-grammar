@@ -240,5 +240,5 @@ BOOLEAN: TRUE | FALSE;
 TEMP_ID: UNDERSCORE;
 ID: UNDERSCORE? LETTER (LETTER | INTEGER | UNDERSCORE)*;
 
-SPACE: [ \t\r\n] -> skip;
-WS: [ \t\r\n\f]+ -> skip;
+SPACE: [ \t\r\n] -> channel(HIDDEN);
+WS: [ \t\r\n\f]+ -> channel(HIDDEN);
