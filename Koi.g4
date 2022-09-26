@@ -5,7 +5,7 @@ grammar Koi;
  */
 
 program: line* EOF;
-line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when_block | enum_block | struct_block) (SEMICOLON line)*;
+line: (comment | statement | expression | block | function_block | procedure_block | while_block | for_block | if_stream | class_block | when | enum | struct) (SEMICOLON line)*;
 // ending: SEMICOLON? NEWLINE | SEMICOLON;
 
 comment: COMMENT | MULTICOMMENT;
@@ -48,7 +48,7 @@ value_change: value (INCREASE | DECREASE);
 
 list_: OPEN_BRACKET (value COMMA)* value? CLOSE_BRACKET;
 
-type_: (OBJ | CHAR | STR | INT | FLO | BOOL | NONE | ID) (OPEN_BRACKET CLOSE_BRACKET)? QUESTION?;
+type_: (OBJ | CHAR | STR | INT | FLO | DOU | BOOL | NONE | ID) (OPEN_BRACKET CLOSE_BRACKET)? QUESTION?;
 
 block: code_block | return_block | break_block | inner_class_block;
 code_block: OPEN_BRACE line* CLOSE_BRACE;
@@ -75,9 +75,9 @@ range_: INTEGER DOUBLE_DOT INTEGER;
 with_length: range_ | list_;
 
 if_stream: if_block elf_block* else_block?;
-if_block: IF compa_list block;
-elf_block: ELF compa_list block;
-else_block: ELSE block;
+if_block: IF compa_list (block | FAT_ARROW line);
+elf_block: ELF compa_list (block | FAT_ARROW line);
+else_block: ELSE (block | FAT_ARROW line);
 
 compa_list: comparisons+=compa_expr (settings+=(OR | AND) comparisons+=compa_expr)*;
 
@@ -91,13 +91,18 @@ method_block: METH procedure_block
 constructor_block: CONSTRUCTOR parameter_set block;
 init_block: INIT block;
 
-when_block: WHEN true_value OPEN_BRACE is_block* when_else? CLOSE_BRACE;
-is_block: IS (half_compa | true_value) (OPEN_BRACE line* CLOSE_BRACE | FAT_ARROW line);
-when_else: ELSE (OPEN_BRACE line* CLOSE_BRACE | FAT_ARROW line);
+when_block: OPEN_BRACE is* when_else? CLOSE_BRACE;
+when: WHEN true_value when_block;
+is_block: OPEN_BRACE line* CLOSE_BRACE;
+is: IS (half_compa | true_value) (is_block | FAT_ARROW line);
+when_else_block: OPEN_BRACE line* CLOSE_BRACE;
+when_else: ELSE (when_else_block | FAT_ARROW line);
 
-enum_block: ENUM name OPEN_BRACE (ID COMMA)* ID? CLOSE_BRACE;
+enum_block: OPEN_BRACE (ID COMMA)* ID? CLOSE_BRACE;
+enum: ENUM name enum_block;
 
-struct_block: STRUCT name OPEN_BRACE struct_set* CLOSE_BRACE;
+struct_block: OPEN_BRACE struct_set* CLOSE_BRACE;
+struct: STRUCT name struct_block;
 struct_set: name COLON type_;
 
 /*
@@ -159,6 +164,7 @@ CHAR: 'char';
 STR: 'str';
 INT: 'int';
 FLO: 'float';
+DOU: 'double';
 BOOL: 'bool';
 
 // Symbols
